@@ -1,0 +1,7 @@
+image: ubuntu/trusty
+git:
+    path: github.com/chuckbutler/charms.reactive
+script:
+    - sudo apt-get update
+    - sudo apt-get install -y python-tox
+    - tox
