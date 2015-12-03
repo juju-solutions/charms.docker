@@ -1,11 +1,19 @@
 language: python
 python:
-  - "2.7"
-  - "3.2"
-  - "3.3"
-  - "3.4"
-  - "3.5"
+- '2.7'
+- '3.2'
+- '3.3'
+- '3.4'
+- '3.5'
 install:
-  - pip install tox
+- pip install tox
 script:
-  - tox
+- tox
+deploy:
+  provider: pypi
+  user: lazypower
+  password:
+    secure: i2/+4jqdf1SCyEqG1VNByBfhN+z/GOjju/p1aYD4xMHUP6HKk7U/ex+PjkRSR1siiD27Bz0EvfUCU6lML/ASM60A9HW9qqBrCbSrgSq7+TudAFFDQv2722ABNiixrZ1NLeFQ0fBBArkpeV8hPyQJhDHy4O866+9CcG3kPvReoyOMJDz1ZtaZpI5bqcSBfgCeiBnPgwVuI6nZ4BEQ6odaTJ+tYJYGoVFGFL17H97h9vlNmdtSRA2MKodbGiSbcFlp9OGVviLtKGwyJNZCn4Kkxciod7RAJ7asaKmzuxrndhz+Ns0s5Tmqs4zTUzLjXD56tCt/fzY+Y1YXs+Xo7haUjVBG3L2Ljdu69zAzqYQQCadY53wLUvcDWyKZajecPdIOxOkZhFYDObotI5OttQT5CB50QlFua+kH1zoT/QTqIMTwfvRd/54XRbs8HWiBWm7s+6VpSmdD08ZOkOJkcCfDEcuPlmOP7HU+/mJKUzNStdm7S45OmWQx1r0GQOIm0mMUxIRI6x3iuWnDjcdw8866nIj98TWFYDQt4eM8DM4EU0O4zadEHOJ8Un0Le2+CZBRFu6BziwKcdiOVda3jwx/cTPIFKQma454AsZ93dn7DqbagAfJpbzH2CQ1ImtS4RkhLYceypoYQ5lijzOz0nMVW4rBXxKucAdpiK0wUsmHyqR0=
+  on:
+    tags: true
+    branch: master
