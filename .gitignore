@@ -3,3 +3,14 @@
 .coverage
 .unit-state.db
 .cache
+charms.docker.egg-info/
+__pycache__/
+dist/
+build/
+MANIFEST
+.env/
+coverage.xml
+.project
+.pydevproject
+.settings
+*~
