@@ -6,6 +6,7 @@ setup(
     version = "0.0.1",
     author = "Charles Butler",
     author_email = "charles.butler@ubuntu.com",
+    url = "http://github.com/juju-solutions/charms.docker",
     description = ( "Python wrappers for the docker CLI and configuring the Docker Daemon in Juju Charms" ),
     license = "GPLv3",
     keywords = "docker juju charm charms",
@@ -13,7 +14,5 @@ setup(
     long_description = "",
     classifiers = [
         "Development Status :: 3 - Alpha",
-        "Topic :: Utiliites",
-        "License :: OSI Approved :: GPLv3 License",
     ],
 )
