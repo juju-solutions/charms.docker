@@ -46,4 +46,4 @@ class Docker:
         try:
             subprocess.check_output(split(cmd))
         except subprocess.CalledProcessError as expec:
-            print "Error: ", expect.returncode, expect.output
+            print("Error: ", expect.returncode, expect.output)
