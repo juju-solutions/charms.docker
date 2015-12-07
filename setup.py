@@ -10,7 +10,7 @@ setup(
     description = ( "Python wrappers for the docker CLI and configuring the Docker Daemon in Juju Charms" ),
     license = "GPLv3",
     keywords = "docker juju charm charms",
-    packages = [],
+    packages = ['charms.docker'],
     long_description = "",
     classifiers = [
         "Development Status :: 3 - Alpha",
