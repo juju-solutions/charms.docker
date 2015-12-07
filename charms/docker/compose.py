@@ -3,7 +3,7 @@ import os
 from contextlib import contextmanager
 from shlex import split
 from subprocess import check_output
-from workspace import Workspace
+from .workspace import Workspace
 
 # Wrapper and convenience methods for charming w/ docker compose in python
 class Compose:

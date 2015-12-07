@@ -4,7 +4,7 @@ import subprocess
 from contextlib import contextmanager
 from shlex import split
 
-from workspace import Workspace
+from .workspace import Workspace
 
 # Wrapper and convenience methods for charming w/ docker in python
 class Docker:
@@ -45,5 +45,5 @@ class Docker:
 
         try:
             subprocess.check_output(split(cmd))
-        except subprocess.CalledProcessError as expec:
+        except subprocess.CalledProcessError as expect:
             print("Error: ", expect.returncode, expect.output)
