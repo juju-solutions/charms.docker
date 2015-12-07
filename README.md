@@ -1,5 +1,7 @@
 # Charms.Docker
 
+[![Build Status](https://travis-ci.org/juju-solutions/charms.docker.svg?branch=master)](https://travis-ci.org/juju-solutions/charms.docker)
+
 This is a library intended to ease development of docker
 deliverable charms, by exposing an API that is easy to
 grok at an initial glance.
@@ -8,6 +10,8 @@ This library was borne from a disgust of mine at seeing many
 `subprocess.check_call` lines littered throughout charms.
 While functionally similar to what this library exposes, it
 should read better than many disjointed os exec calls.
+
+This library is also targeted at python 3.3+
 
 ## To use charms.docker
 
