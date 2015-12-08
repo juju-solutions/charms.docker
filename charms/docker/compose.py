@@ -55,9 +55,9 @@ class Compose:
         defined `docker-compose.yml`
         '''
         if service:
-            cmd = "docker-compose rm {}".format(service)
+            cmd = "docker-compose rm -f {}".format(service)
         else:
-            cmd = "docker-compose rm"
+            cmd = "docker-compose rm -f"
         self.run(cmd)
 
     def run(self, cmd):
