@@ -39,10 +39,22 @@ class TestCompose:
             expect = 'docker-compose kill nginx'
             s.assert_called_with(expect)
 
-    def test_kill_service(self, compose):
+    def test_kill_service_default(self, compose):
         with patch('charms.docker.compose.Compose.run') as s:
             compose.kill()
             expect = 'docker-compose kill'
+            s.assert_called_with(expect)
+
+    def test_rm_service_default(self, compose):
+        with patch('charms.docker.compose.Compose.run') as s:
+            compose.rm()
+            expect = 'docker-compose rm'
+            s.assert_called_with(expect)
+
+    def test_rm_service(self, compose):
+        with patch('charms.docker.compose.Compose.run') as s:
+            compose.rm('nginx')
+            expect = 'docker-compose rm nginx'
             s.assert_called_with(expect)
 
     @patch('charms.docker.compose.chdir')
