@@ -47,6 +47,19 @@ class Compose:
             cmd = "docker-compose kill"
         self.run(cmd)
 
+    def rm(self, service=None):
+        '''
+        Convenience method that wraps `docker-compose rm`
+
+        usage: c.rm('nginx') to remove the 'nginx' service from the
+        defined `docker-compose.yml`
+        '''
+        if service:
+            cmd = "docker-compose rm -f {}".format(service)
+        else:
+            cmd = "docker-compose rm -f"
+        self.run(cmd)
+
     def run(self, cmd):
         '''
         chdir sets working context on the workspace
