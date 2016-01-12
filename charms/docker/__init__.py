@@ -49,5 +49,5 @@ class Docker:
             print("Error: ", expect.returncode, expect.output)
 
     def login(self, user, password, email):
-        cmd = "docker login -u {0} -p {1} -e {2}".format(user, password, email)
-        subprocess.check_call(split(cmd))
+        cmd = ['docker', 'login', '-u', user, '-p', password', '-e', email]
+        subprocess.check_call(cmd)
