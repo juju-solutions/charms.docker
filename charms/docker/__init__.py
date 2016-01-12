@@ -47,3 +47,7 @@ class Docker:
             subprocess.check_output(split(cmd))
         except subprocess.CalledProcessError as expect:
             print("Error: ", expect.returncode, expect.output)
+
+    def login(self, user, password, email):
+        cmd = "docker login -u {0} -p {1} -e {2}".format(user, password, email)
+        subprocess.check_call(split(cmd))

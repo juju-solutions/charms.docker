@@ -40,3 +40,9 @@ class TestDocker:
             docker.run('nginx', '-d --name=nginx')
             spmock.assert_called_with(['docker', 'run', '-d', '--name=nginx',
              'nginx'])
+
+    def test_login(self, docker):
+        with patch('subprocess.check_call') as spmock:
+            docker.login('cloudguru','XXX','obrien@ds9.org')
+            spmock.assert_called_with(['docker', 'login', '-u', 'cloudguru',
+            '-p', 'XXX', '-e', 'obrien@ds9.org'])
