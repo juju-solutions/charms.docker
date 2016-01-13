@@ -5,7 +5,7 @@ from shlex import split
 from subprocess import check_output
 from .workspace import Workspace
 
-# Wrapper and convenience methods for charming w/ docker compose in python
+
 class Compose:
     def __init__(self, workspace, strict=True):
         '''

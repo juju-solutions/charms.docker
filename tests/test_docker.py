@@ -1,14 +1,13 @@
 from charms.docker import Docker
-from charms import docker
 from mock import patch
 import pytest
+
 
 class TestDocker:
 
     @pytest.fixture
     def docker(self):
         return Docker()
-
 
     # There's a pattern to run an isolated docker daemon to run supporting
     # infrastructure of the primary docker daemon. This bootstrap daemon
@@ -35,8 +34,14 @@ class TestDocker:
 
     def test_run(self, docker):
         with patch('subprocess.check_output') as spmock:
-            docker.run('nginx')
+            docker.run(image='nginx')
             spmock.assert_called_with(['docker', 'run', 'nginx'])
-            docker.run('nginx', '-d --name=nginx')
+            docker.run('nginx', ['-d --name=nginx'])
             spmock.assert_called_with(['docker', 'run', '-d', '--name=nginx',
-             'nginx'])
+                                       'nginx'])
+
+    def test_login(self, docker):
+        with patch('subprocess.check_call') as spmock:
+            docker.login('cloudguru', 'XXX', 'obrien@ds9.org')
+            spmock.assert_called_with(['docker', 'login', '-u', 'cloudguru',
+                                       '-p', 'XXX', '-e', 'obrien@ds9.org'])
