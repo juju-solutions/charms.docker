@@ -1,14 +1,16 @@
 import os
 
+
 class Workspace:
     '''
-    Docker workspaces are unique in our world, as they can be one of two context
-    dependent things: A Docker build directory, containing only a single
-    Dockerfile, or they can be part of a formation using docker-compose in which
-    they warehouse a docker-compose.yml file.
+    Docker workspaces are unique in our world, as they can be one of two
+    context dependent things: A Docker build directory, containing only a
+    single Dockerfile, or they can be part of a formation using docker-compose
+    in which they warehouse a docker-compose.yml file.
 
-    Under most situations we only care about the context the charm author wishes
-    to be in, and what implications that has on the workspace to be valid.
+    Under most situations we only care about the context the charm author
+    wishes to be in, and what implications that has on the workspace to be
+    valid.
 
     This method simply exposes an overrideable object to determine these
     characteristics.

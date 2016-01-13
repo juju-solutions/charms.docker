@@ -35,9 +35,9 @@ class TestDocker:
 
     def test_run(self, docker):
         with patch('subprocess.check_output') as spmock:
-            docker.run('nginx')
+            docker.run(image='nginx')
             spmock.assert_called_with(['docker', 'run', 'nginx'])
-            docker.run('nginx', '-d --name=nginx')
+            docker.run('nginx', ['-d --name=nginx'])
             spmock.assert_called_with(['docker', 'run', '-d', '--name=nginx',
              'nginx'])
 

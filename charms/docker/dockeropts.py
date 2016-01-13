@@ -41,7 +41,7 @@ class DockerOpts:
             item_data = self.data[key]
             for c in values:
                 c = c.strip()
-                if not c in item_data:
+                if c not in item_data:
                     item_data.append(c)
             self.data[key] = item_data
         else:

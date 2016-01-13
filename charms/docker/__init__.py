@@ -1,12 +1,11 @@
 import os
 import subprocess
 
-from contextlib import contextmanager
 from shlex import split
 
 from .workspace import Workspace
 
-# Wrapper and convenience methods for charming w/ docker in python
+
 class Docker:
     '''
     Wrapper class to communicate with the Docker daemon on behalf of
@@ -37,11 +36,25 @@ class Docker:
         # TODO: Add TCP:// support for running check
         return os.path.isfile(self.socket)
 
-    def run(self, image, options="", volumes=[], ports=[]):
-        volumes = " --volume=".join(volumes)
-        ports = " -p".join(ports)
-        cmd = "docker run {opts} {vols} {ports} {image}".format(
-            opts=options, vols=volumes, ports=ports, image=image)
+    def run(self, image, options=[], commands=[], arg=[]):
+        '''
+        Docker Run exposed as a method. This wont be as natural as the
+        command line docker experience.
+
+        Docker CLI output example:
+        Usage:	docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
+
+        @param image - string of the container to pull from the registry,
+                        eg: ubuntu:latest
+        @param options - array of string  options, eg: ['-d', '-v /tmp:/tmp']
+        @param commands - array of string commands, eg: ['ls']
+        @param arg - array of string command args, eg: ['-al']
+        '''
+        options = ' '.join(options)
+        command = ' '.join(commands)
+        args = ' '.join(arg)
+        cmd = "docker run {0} {1} {2} {3}".format(
+            options, image, command, args)
 
         try:
             subprocess.check_output(split(cmd))
@@ -49,5 +62,19 @@ class Docker:
             print("Error: ", expect.returncode, expect.output)
 
     def login(self, user, password, email):
-        cmd = ['docker', 'login', '-u', user, '-p', password', '-e', email]
+        '''
+        Docker login exposed as a method.
+
+        @param user - Username in the registry
+        @param password - Password for the registry
+        @param email - Email address on account (dockerhub)
+        '''
+        cmd = ['docker', 'login', '-u', user, '-p', password, '-e', email]
         subprocess.check_call(cmd)
+
+    def ps(self):
+        '''
+        return a string of docker status output
+        '''
+        cmd = ['docker', 'ps']
+        return subprocess.check_output(cmd)
