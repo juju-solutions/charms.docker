@@ -4,7 +4,7 @@ python:
 - '3.5'
 install:
 - pip install tox
-- python-coveralls
+- pip install python-coveralls
 after_success:
   - coveralls
 script:
