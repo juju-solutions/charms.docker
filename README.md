@@ -1,9 +1,6 @@
 # Charms.Docker
 
-[![Build Status](https://travis-ci.org/juju-solutions/charms.docker.svg?branch=master)](https://travis-ci.org/juju-solutions/charms.docker)
-
-[![Coverage Status](https://coveralls.io/repos/github/juju-solutions/charms.docker/badge.svg?branch=master)](https://coveralls.io/github/juju-solutions/charms.docker?branch=master)
-
+[![Build Status](https://travis-ci.org/juju-solutions/charms.docker.svg?branch=master)](https://travis-ci.org/juju-solutions/charms.docker) [![Coverage Status](https://coveralls.io/repos/github/juju-solutions/charms.docker/badge.svg?branch=master)](https://coveralls.io/github/juju-solutions/charms.docker?branch=master)
 
 This is a library intended to ease development of docker
 deliverable charms, by exposing an API that is easy to
