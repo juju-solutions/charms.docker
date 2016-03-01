@@ -78,3 +78,10 @@ class Docker:
         '''
         cmd = ['docker', 'ps']
         return subprocess.check_output(cmd)
+
+    def pull(self, image):
+        '''
+        Pull an image from the docker hub
+        '''
+        cmd = ['docker', 'pull', image]
+        return subprocess.check_output(cmd)
