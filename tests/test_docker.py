@@ -45,3 +45,8 @@ class TestDocker:
             docker.login('cloudguru', 'XXX', 'obrien@ds9.org')
             spmock.assert_called_with(['docker', 'login', '-u', 'cloudguru',
                                        '-p', 'XXX', '-e', 'obrien@ds9.org'])
+
+    def test_pull(self, docker):
+        with patch('subprocess.check_output') as spmock:
+            docker.pull('tester/testing')
+            spmock.assert_called_with(['docker', 'pull', 'tester/testing'])
