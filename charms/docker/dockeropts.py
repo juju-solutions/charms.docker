@@ -2,8 +2,8 @@ from charmhelpers.core import unitdata
 
 
 class DockerOpts:
-
-    ''' DockerOptsManager - A Python class for managing the DEFAULT docker
+    '''
+    DockerOptsManager - A Python class for managing the DEFAULT docker
     options on a daemon dynamically. As a docker daemon integrates with more
     services it becomes quickly unweidly to just "template and go" for this
     solution. Having a data bag to stuff in options/multioptions and render to
@@ -14,7 +14,7 @@ class DockerOpts:
 
     Summary:
     opts = DockerOpts()
-    opts.add('mtu', flannel_mtu)
+    opts.add('bip', '192.168.22.2')
     opts.to_s()
     '''
 
@@ -29,7 +29,8 @@ class DockerOpts:
         self.db.set('docker_opts', self.data)
 
     def add(self, key, value):
-        ''' Adds data to the map of values for the DockerOpts file.
+        '''
+        Adds data to the map of values for the DockerOpts file.
         Supports single values, or "multiopt variables"
 
         eg:
@@ -50,17 +51,22 @@ class DockerOpts:
         self.__save()
 
     def remove(self, key, value):
-        ''' Remove a flag value from the DockerOpts manager
+        '''
+        Remove a flag value from the DockerOpts manager
         Assuming the data is currently {'foo': ['bar', 'baz']}
 
         d.remove('foo', 'bar')
         > {'foo': ['baz']}
+
+        :params key:
+        :params value:
         '''
         self.data[key].remove(value)
         self.__save()
 
     def to_s(self):
-        ''' Render the flags to a single string, prepared for the Docker
+        '''
+        Render the flags to a single string, prepared for the Docker
         Defaults file. Typically in /etc/default/docker
 
         d.to_s()
