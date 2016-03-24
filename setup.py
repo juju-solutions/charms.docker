@@ -1,9 +1,18 @@
 import os
 from setuptools import setup
 
+version_file = os.path.abspath(
+    os.path.join(
+        os.path.dirname(os.path.dirname(__file__)), 'VERSION'))
+
+with open(version_file) as v:
+    VERSION = v.read().strip()
+
+
+
 setup(
     name = "charms.docker",
-    version = "0.0.8",
+    version = VERSION,
     author = "Charles Butler",
     author_email = "charles.butler@ubuntu.com",
     url = "http://github.com/juju-solutions/charms.docker",
