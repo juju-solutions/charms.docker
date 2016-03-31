@@ -1,8 +1,4 @@
-import os
-
-from contextlib import contextmanager
-from shlex import split
-from subprocess import check_output
+from .runner import run
 from .workspace import Workspace
 
 
@@ -13,75 +9,125 @@ class Compose:
         a natural language for performing common tasks with docker in
         juju charms.
 
-        @param workspace - Define the CWD for docker-compose execution
+        :param workspace:  Define the CWD for docker-compose execution
 
-        @param strict - Enable/disable workspace validation
+        :param strict: - Enable/disable workspace validation
         '''
         self.workspace = Workspace(workspace)
         if strict:
             self.workspace.validate()
 
-    def up(self, service=None):
+    def build(self, service=None, force_rm=True, no_cache=False, pull=False):
         '''
-        Convenience method that wraps `docker-compose up`
+        Build or rebuild services.
 
-        usage: c.up('nginx')  to start the 'nginx' service from the
-        defined `docker-compose.yml` as a daemon
+        Services are built once and then tagged as `project_service`. If you
+        change a service's Dockerfile or the contents of its build directory
+        you can invoke this method to rebuild it.
+
+        :param service: if provided will rebuild scoped to that service
+        :param force_rm: Always remove intermediate containers.
+        :param no_cache: Do not use cache when building the image
+        :param pull: Always attempt to pull a newer version of the image
         '''
+        cmd = "docker-compose build"
+
+        if force_rm:
+            cmd = "{} --force-rm".format(cmd)
+        if no_cache:
+            cmd = "{} --no-cache".format(cmd)
+        if pull:
+            cmd = "{} --pull".format(cmd)
         if service:
-            cmd = "docker-compose up -d {}".format(service)
-        else:
-            cmd = "docker-compose up -d"
-        self.run(cmd)
+            cmd = "{} {}".format(cmd, service)
+
+        run(cmd, self.workspace)
 
     def kill(self, service=None):
         '''
         Convenience method that wraps `docker-compose kill`
 
-        usage: c.kill('nginx')  to kill the 'nginx' service from the
-        defined `docker-compose.yml`
+        :param service: if defined will only kill that service.
         '''
         if service:
             cmd = "docker-compose kill {}".format(service)
         else:
             cmd = "docker-compose kill"
-        self.run(cmd)
+        run(cmd, self.workspace)
+
+    def pull(self, service=None):
+        '''
+        Pulls service images
+
+        :param service: if defined, only pulls the image for specified service.
+        '''
+        if service:
+            cmd = "docker-compose pull {}".format(service)
+        else:
+            cmd = "docker-compose pull"
+        run(cmd, self.workspace)
+
+    def restart(self, service=None):
+        '''
+        Restart services
+
+        :param service: if defined, only restarts the specified service.
+        '''
+        if service:
+            cmd = "docker-compose restart {}".format(service)
+        else:
+            cmd = "docker-compose restart"
+        run(cmd, self.workspace)
 
     def rm(self, service=None):
         '''
         Convenience method that wraps `docker-compose rm`
 
-        usage: c.rm('nginx') to remove the 'nginx' service from the
-        defined `docker-compose.yml`
+        :param service: if defined only the specified service.
         '''
         if service:
             cmd = "docker-compose rm -f {}".format(service)
         else:
             cmd = "docker-compose rm -f"
-        self.run(cmd)
+        run(cmd, self.workspace)
 
-    def run(self, cmd):
+    def scale(self, service, count):
         '''
-        chdir sets working context on the workspace
+        Set number of containers to run for a service.
 
-        @param: cmd - String of the command to run. eg: echo "hello world"
-        the string is passed through shlex.parse() for convenience.
-
-        returns STDOUT of command execution
-
-        usage: c.run('docker-compose ps')
+        :param service: Service to scale as defined in docker-compose.yml
+        :param count: number of containers to scale
         '''
-        with chdir("{}".format(self.workspace)):
-            out = check_output(split(cmd))
-            return out
+        cmd = "docker-compose scale {}={}".format(service, count)
+        run(cmd, self.workspace)
 
+    def start(self, service):
+        '''
+        Start existing containers
 
-# This is helpful for setting working directory context
-@contextmanager
-def chdir(path):
-    '''Change the current working directory to a different directory to run
-    commands and return to the previous directory after the command is done.'''
-    old_dir = os.getcwd()
-    os.chdir(path)
-    yield
-    os.chdir(old_dir)
+        :param service: Service to start
+        '''
+        cmd = "docker-compose start {}".format(service)
+        run(cmd, self.workspace)
+
+    def stop(self, service, timeout=10):
+        '''
+        Stop running containers without removing them.
+
+        :param service: Service to stop.
+        :param timeout: specify a shutdown timeout in seconds.
+        '''
+        cmd = "docker-compose stop -t {} {}".format(timeout, service)
+        run(cmd, self.workspace)
+
+    def up(self, service=None):
+        '''
+        Convenience method that wraps `docker-compose up`
+
+        :param service: if defined only launches the specified service
+        '''
+        if service:
+            cmd = "docker-compose up -d {}".format(service)
+        else:
+            cmd = "docker-compose up -d"
+        run(cmd, self.workspace)
