@@ -15,7 +15,7 @@ class Docker:
     def __init__(self, socket="unix:///var/run/docker.sock", workspace=None):
         '''
         :param socket: URI to the Docker daemon socket
-            default: unix://var/run/docker.sock
+            default: unix:///var/run/docker.sock
 
         :param workspace: Path to directory containing a Dockerfile
             default: None
@@ -29,7 +29,7 @@ class Docker:
         Predicate method to determine if the daemon we are talking to is
         actually online and recieving events.
 
-        ex: bootstrap = Docker(socket="unix://var/run/docker-boostrap.sock")
+        ex: bootstrap = Docker(socket="unix:///var/run/docker-boostrap.sock")
         bootstrap.running()
         > True
         '''
