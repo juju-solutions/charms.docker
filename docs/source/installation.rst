@@ -17,11 +17,9 @@ Source
 ~~~~~~
 
 charms.docker is built with Python3, so please make sure it’s installed prior
-to following these steps. While you can run Amulet from source, it’s not
-recommended as it requires several changes to environment variables in
-order for Amulet to operate as it does in the packaged version.
+to following these steps.
 
-To install Amulet from source, first get the source:
+To install charms.docker from source, first get the source:
 
 .. code:: bash
 
@@ -34,6 +32,6 @@ Move in to the ``charms.docker`` directory and run:
      sudo python3 setup.py install
 
      You can also access the Python libraries; however, your ``PYTHONPATH``
-     will need to be amended in order for it to find the amulet directory.
+     will need to be amended in order for it to find the charms.docker directory.
 
-.. _GitHub: https://github.com/juju/amulet/releases
+.. _GitHub: https://github.com/juju-solutions/charms.docker/releases
