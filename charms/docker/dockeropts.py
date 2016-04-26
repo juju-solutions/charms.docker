@@ -31,22 +31,29 @@ class DockerOpts:
     def add(self, key, value):
         '''
         Adds data to the map of values for the DockerOpts file.
-        Supports single values, or "multiopt variables"
+        Supports single values, or "multiopt variables". If you
+        have a flag only option, like --tlsverify, set the value
+        to None.
 
         eg:
         opts.add('label', 'foo')
         opts.add('label', 'foo, bar, baz')
+        opts.add('flagonly', None)
         '''
-        values = [x.strip() for x in value.split(',')]
-        if key in self.data:
-            item_data = self.data[key]
-            for c in values:
-                c = c.strip()
-                if c not in item_data:
-                    item_data.append(c)
-            self.data[key] = item_data
+        if value:
+
+            values = [x.strip() for x in value.split(',')]
+            if key in self.data:
+                item_data = self.data[key]
+                for c in values:
+                    c = c.strip()
+                    if c not in item_data:
+                        item_data.append(c)
+                self.data[key] = item_data
+            else:
+                self.data[key] = values
         else:
-            self.data[key] = values
+            self.data[key] = None
 
         self.__save()
 
@@ -74,6 +81,9 @@ class DockerOpts:
         '''
         flags = []
         for key in self.data:
-            for item in self.data[key]:
-                flags.append("--{}={}".format(key, item))
+            if self.data[key] == None:
+                flags.append("--{}".format(key))
+            else:
+                for item in self.data[key]:
+                    flags.append("--{}={}".format(key, item))
         return ' '.join(flags)

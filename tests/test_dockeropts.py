@@ -36,3 +36,13 @@ class TestDockerOpts:
         x.add('juju', 'is amazing')
         d = DockerOpts()
         assert d.data['juju'] == ['is amazing']
+
+    def test_add_flag_only(self):
+        d = DockerOpts()
+        d.add('flagonly', None)
+        assert(d.data['flagonly'] is None)
+
+    def test_render_flag_only(self):
+        d = DockerOpts()
+        d.add('flagonly', None)
+        assert "--flagonly" in d.to_s()
