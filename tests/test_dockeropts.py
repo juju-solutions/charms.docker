@@ -46,3 +46,8 @@ class TestDockerOpts:
         d = DockerOpts()
         d.add('flagonly', None)
         assert "--flagonly" in d.to_s()
+
+    def test_strict_options(self):
+        d = DockerOpts()
+        d.add('strictmode', 'strict-formatting,enabled-because', strict=True)
+        assert "--strictmode=strict-formatting,enabled-because" in d.to_s()

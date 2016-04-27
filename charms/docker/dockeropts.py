@@ -28,22 +28,26 @@ class DockerOpts:
     def __save(self):
         self.db.set('docker_opts', self.data)
 
-    def add(self, key, value):
+    def add(self, key, value, strict=False):
         '''
         Adds data to the map of values for the DockerOpts file.
         Supports single values, or "multiopt variables". If you
         have a flag only option, like --tlsverify, set the value
-        to None.
+        to None. To preserve the exact value, pass strict
 
         eg:
         opts.add('label', 'foo')
         opts.add('label', 'foo, bar, baz')
         opts.add('flagonly', None)
+        opts.add('cluster-store', 'consul://a:4001,b:4001,c:4001/swarm', strict=True)
         '''
-        if value:
+        if strict:
+            self.data['{}-strict'.format(key)] = value
 
+        if value:
             values = [x.strip() for x in value.split(',')]
-            if key in self.data:
+            # handle updates
+            if key in self.data and self.data[key] is not None:
                 item_data = self.data[key]
                 for c in values:
                     c = c.strip()
@@ -51,10 +55,11 @@ class DockerOpts:
                         item_data.append(c)
                 self.data[key] = item_data
             else:
+                # handle new
                 self.data[key] = values
         else:
+            # handle flagonly
             self.data[key] = None
-
         self.__save()
 
     def remove(self, key, value):
@@ -82,8 +87,14 @@ class DockerOpts:
         flags = []
         for key in self.data:
             if self.data[key] == None:
+                # handle flagonly
                 flags.append("--{}".format(key))
+            elif '-strict' in key:
+                # handle strict values
+                proper_key = key.rstrip('-strict')
+                flags.append("--{}={}".format(proper_key, self.data[key]))
             else:
+                # handle multiopt and typical flags
                 for item in self.data[key]:
                     flags.append("--{}={}".format(key, item))
         return ' '.join(flags)
