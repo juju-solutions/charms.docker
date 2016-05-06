@@ -74,7 +74,7 @@ class Docker:
 
     def logs(self, container_id, raise_on_failure=False):
         '''
-        Docker logs sexposed as a method.
+        Docker logs exposed as a method.
 
         :param container_id: - UUID for the container to fetch logs
         '''
