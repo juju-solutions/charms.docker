@@ -40,6 +40,11 @@ class TestDocker:
             spmock.assert_called_with(['docker', 'run', '-d', '--name=nginx',
                                        'nginx'])
 
+    def test_logs(self, docker):
+        with patch('subprocess.check_output') as spmock:
+            docker.logs('6f137adb5d27')
+            spmock.assert_called_with(['docker', 'logs', '6f137adb5d27'])
+
     def test_login(self, docker):
         with patch('subprocess.check_call') as spmock:
             docker.login('cloudguru', 'XXX', 'obrien@ds9.org')
