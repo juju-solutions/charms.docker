@@ -72,6 +72,17 @@ class Docker:
         cmd = ['docker', 'login', '-u', user, '-p', password, '-e', email]
         subprocess.check_call(cmd)
 
+    def logs(self, container_id, raise_on_failure=False):
+        '''
+        Docker logs exposed as a method.
+
+        :param container_id: - UUID for the container to fetch logs
+        '''
+        cmd = ['docker', 'logs', container_id]
+        output = subprocess.check_output(cmd)
+
+        return output.decode('ascii', 'ignore')
+
     def ps(self):
         '''
         return a string of docker status output
