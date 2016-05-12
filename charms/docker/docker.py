@@ -61,7 +61,7 @@ class Docker:
         except subprocess.CalledProcessError as expect:
             print("Error: ", expect.returncode, expect.output)
 
-    def login(self, user, password, email):
+    def login(self, user, password, email, registry=None):
         '''
         Docker login exposed as a method.
 
@@ -70,6 +70,8 @@ class Docker:
         :param email: - Email address on account (dockerhub)
         '''
         cmd = ['docker', 'login', '-u', user, '-p', password, '-e', email]
+        if registry:
+            cmd.append(registry)
         subprocess.check_call(cmd)
 
     def logs(self, container_id, raise_on_failure=False):
