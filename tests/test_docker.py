@@ -51,6 +51,14 @@ class TestDocker:
             spmock.assert_called_with(['docker', 'login', '-u', 'cloudguru',
                                        '-p', 'XXX', '-e', 'obrien@ds9.org'])
 
+    def test_login_registry(self, docker):
+        with patch('subprocess.check_call') as spmock:
+            docker.login('cloudguru', 'XXX', 'obrien@ds9.org',
+                         registry='test:1234')
+            spmock.assert_called_with(['docker', 'login', '-u', 'cloudguru',
+                                       '-p', 'XXX', '-e', 'obrien@ds9.org',
+                                       'test:1234'])
+
     def test_pull(self, docker):
         with patch('subprocess.check_output') as spmock:
             docker.pull('tester/testing')
