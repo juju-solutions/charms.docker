@@ -12,6 +12,9 @@ class Compose:
         :param workspace:  Define the CWD for docker-compose execution
 
         :param strict: - Enable/disable workspace validation
+
+        :param socket: - Host-string for a remote docker-engine other than
+        the implied default '/var/run/docker.sock'.
         '''
         self.workspace = Workspace(workspace)
         if strict:
