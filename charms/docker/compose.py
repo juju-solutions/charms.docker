@@ -3,7 +3,7 @@ from .workspace import Workspace
 
 
 class Compose:
-    def __init__(self, workspace, strict=True):
+    def __init__(self, workspace, strict=True, socket=None):
         '''
         Object to manage working with Docker-Compose on the CLI. exposes
         a natural language for performing common tasks with docker in
@@ -16,6 +16,10 @@ class Compose:
         self.workspace = Workspace(workspace)
         if strict:
             self.workspace.validate()
+        if socket:
+            self.socket = socket
+        else:
+            self.socket = None
 
     def build(self, service=None, force_rm=True, no_cache=False, pull=False):
         '''
@@ -41,7 +45,7 @@ class Compose:
         if service:
             cmd = "{} {}".format(cmd, service)
 
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def kill(self, service=None):
         '''
@@ -53,7 +57,7 @@ class Compose:
             cmd = "docker-compose kill {}".format(service)
         else:
             cmd = "docker-compose kill"
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def pull(self, service=None):
         '''
@@ -65,7 +69,7 @@ class Compose:
             cmd = "docker-compose pull {}".format(service)
         else:
             cmd = "docker-compose pull"
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def restart(self, service=None):
         '''
@@ -77,7 +81,7 @@ class Compose:
             cmd = "docker-compose restart {}".format(service)
         else:
             cmd = "docker-compose restart"
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def rm(self, service=None):
         '''
@@ -89,7 +93,7 @@ class Compose:
             cmd = "docker-compose rm -f {}".format(service)
         else:
             cmd = "docker-compose rm -f"
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def scale(self, service, count):
         '''
@@ -99,7 +103,7 @@ class Compose:
         :param count: number of containers to scale
         '''
         cmd = "docker-compose scale {}={}".format(service, count)
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def start(self, service):
         '''
@@ -108,7 +112,7 @@ class Compose:
         :param service: Service to start
         '''
         cmd = "docker-compose start {}".format(service)
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def stop(self, service, timeout=10):
         '''
@@ -118,7 +122,7 @@ class Compose:
         :param timeout: specify a shutdown timeout in seconds.
         '''
         cmd = "docker-compose stop -t {} {}".format(timeout, service)
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
 
     def up(self, service=None):
         '''
@@ -130,4 +134,4 @@ class Compose:
             cmd = "docker-compose up -d {}".format(service)
         else:
             cmd = "docker-compose up -d"
-        run(cmd, self.workspace)
+        run(cmd, self.workspace, self.socket)
