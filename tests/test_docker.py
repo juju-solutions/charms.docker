@@ -1,6 +1,7 @@
 from charms.docker import Docker
 from mock import patch
 import pytest
+from subprocess import CalledProcessError
 
 
 class TestDocker:
@@ -27,6 +28,59 @@ class TestDocker:
         devel = Docker(workspace="files/tmp")
         assert "{}".format(devel.workspace) == "files/tmp"
 
+    def test_kill(self, docker):
+        with patch('charms.docker.Docker._run') as rp:
+            docker.kill('12345')
+            rp.assert_called_with('kill 12345')
+
+    @patch('charms.docker.Docker.wait')
+    @patch('charms.docker.Docker.rm')
+    @patch('charms.docker.Docker.kill')
+    def test_pedantic_kill(self, kmock, rmock, wmock, docker):
+        docker.pedantic_kill('12345')
+        kmock.assert_called_with('12345')
+        wmock.assert_called_with('12345')
+        rmock.assert_called_with('12345', True, True)
+
+    def test_logs(self, docker):
+        with patch('subprocess.check_output') as spmock:
+            docker.logs('6f137adb5d27')
+            spmock.assert_called_with(['docker',  '-H',
+                                       'unix:///var/run/docker.sock',
+                                       'logs', '6f137adb5d27'])
+
+    def test_login(self, docker):
+        with patch('subprocess.check_call') as spmock:
+            docker.login('cloudguru', 'XXX', 'obrien@ds9.org')
+            spmock.assert_called_with(['docker',  '-H',
+                                       'unix:///var/run/docker.sock',
+                                       'login', '-u', 'cloudguru',
+                                       '-p', 'XXX', '-e', 'obrien@ds9.org'])
+
+    def test_login_registry(self, docker):
+        with patch('subprocess.check_call') as spmock:
+            docker.login('cloudguru', 'XXX', 'obrien@ds9.org',
+                         registry='test:1234')
+            spmock.assert_called_with(['docker', '-H',
+                                       'unix:///var/run/docker.sock', 'login',
+                                       '-u', 'cloudguru',
+                                       '-p', 'XXX', '-e', 'obrien@ds9.org',
+                                       'test:1234'])
+
+    def test_ps(self, docker):
+        with patch('subprocess.check_output') as rp:
+            docker.ps()
+            rp.assert_called_with(['docker', '-H',
+                                   'unix:///var/run/docker.sock',
+                                   'ps'])
+
+    def test_pull(self, docker):
+        with patch('subprocess.check_output') as spmock:
+            docker.pull('tester/testing')
+            spmock.assert_called_with(['docker',  '-H',
+                                       'unix:///var/run/docker.sock',
+                                       'pull', 'tester/testing'])
+
     def test_running(self, bootstrap):
         with patch('os.path.isfile') as isfilemock:
             isfilemock.return_value = True
@@ -35,31 +89,21 @@ class TestDocker:
     def test_run(self, docker):
         with patch('subprocess.check_output') as spmock:
             docker.run(image='nginx')
-            spmock.assert_called_with(['docker', 'run', 'nginx'])
+            spmock.assert_called_with(['docker', '-H',
+                                       'unix:///var/run/docker.sock',
+                                       'run', 'nginx'])
             docker.run('nginx', ['-d --name=nginx'])
-            spmock.assert_called_with(['docker', 'run', '-d', '--name=nginx',
+            spmock.assert_called_with(['docker',  '-H',
+                                       'unix:///var/run/docker.sock',
+                                       'run', '-d', '--name=nginx',
                                        'nginx'])
 
-    def test_logs(self, docker):
-        with patch('subprocess.check_output') as spmock:
-            docker.logs('6f137adb5d27')
-            spmock.assert_called_with(['docker', 'logs', '6f137adb5d27'])
+    def test_wait(self, docker):
+        with patch('charms.docker.Docker._run') as rp:
+            docker.wait('12345')
+            rp.assert_called_with('wait 12345')
 
-    def test_login(self, docker):
-        with patch('subprocess.check_call') as spmock:
-            docker.login('cloudguru', 'XXX', 'obrien@ds9.org')
-            spmock.assert_called_with(['docker', 'login', '-u', 'cloudguru',
-                                       '-p', 'XXX', '-e', 'obrien@ds9.org'])
-
-    def test_login_registry(self, docker):
-        with patch('subprocess.check_call') as spmock:
-            docker.login('cloudguru', 'XXX', 'obrien@ds9.org',
-                         registry='test:1234')
-            spmock.assert_called_with(['docker', 'login', '-u', 'cloudguru',
-                                       '-p', 'XXX', '-e', 'obrien@ds9.org',
-                                       'test:1234'])
-
-    def test_pull(self, docker):
-        with patch('subprocess.check_output') as spmock:
-            docker.pull('tester/testing')
-            spmock.assert_called_with(['docker', 'pull', 'tester/testing'])
+    def test_rm(self, docker):
+        with patch('charms.docker.Docker._run') as rp:
+            docker.rm('12345', True, True)
+            rp.assert_called_with('rm -f -v 12345')
