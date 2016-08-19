@@ -81,10 +81,17 @@ class TestDocker:
                                        'unix:///var/run/docker.sock',
                                        'pull', 'tester/testing'])
 
-    def test_running(self, bootstrap):
-        with patch('os.path.isfile') as isfilemock:
-            isfilemock.return_value = True
-            assert bootstrap.running() is True
+    def test_running(self, bootstrap, docker):
+        with patch('subprocess.check_call') as call_mock:
+            bootstrap.running()
+            call_mock.assert_called_with(['docker', '-H',
+                                          'unix:///var/run/docker-bootstrap.sock',  # noqa
+                                          'info'])
+            docker.running()
+            call_mock.assert_called_with(['docker', '-H',
+                                          'unix:///var/run/docker.sock',
+                                          'info'])
+
 
     def test_run(self, docker):
         with patch('subprocess.check_output') as spmock:

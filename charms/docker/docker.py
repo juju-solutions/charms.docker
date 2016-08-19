@@ -13,6 +13,8 @@ class Docker:
 
     def __init__(self, socket="unix:///var/run/docker.sock", workspace=None):
         '''
+        Create a Docker object with socket and optional workspace.
+        
         :param socket: URI to the Docker daemon socket
             default: unix:///var/run/docker.sock
 
@@ -51,10 +53,11 @@ class Docker:
         return self._run(cmd)
 
     def pedantic_kill(self, container_id):
-        ''' Pedantically kill a container, by killing it, then wait, then
-            rm -rf it.'''
-
-        # a workaround for bug https://github.com/docker/docker/issues/3968.
+        ''' 
+        Pedantically kill a container, by killing it, then wait, then
+        docker rm -f -v the container.
+        '''
+        # A workaround for bug https://github.com/docker/docker/issues/3968
         out = self.kill(container_id)
         if out != 0:
             print("Failed killing container")
@@ -67,7 +70,7 @@ class Docker:
 
     def ps(self):
         '''
-        return a string of docker status output
+        Return a string of docker status output.
         '''
         cmd = "ps"
         return self._run_with_output(cmd)
@@ -80,6 +83,13 @@ class Docker:
         return self._run_with_output(cmd)
 
     def rm(self, container_id, force=False, volume=False):
+        '''
+        Remove the container.
+        
+        :param container_id: The container identifier to remove.
+        :param force: Force the removal of a running container (uses SIGKILL).
+        :param volume: Remove the volumes associated with the container.
+        '''
         cmd = "rm"
         if force:
             cmd = "{0} {1}".format(cmd, "-f")
@@ -110,22 +120,18 @@ class Docker:
         cmd = "run {0} {1} {2} {3}".format(
             options, image, command, args)
         return self._run_with_output(cmd)
-        # try:
-        #     subprocess.check_output(split(cmd))
-        # except subprocess.CalledProcessError as expect:
-        #     print("Error: ", expect.returncode, expect.output)
 
     def running(self):
         '''
         Predicate method to determine if the daemon we are talking to is
         actually online and recieving events.
 
-        ex: bootstrap = Docker(socket="unix:///var/run/docker-boostrap.sock")
+        ex: bootstrap = Docker(socket="unix:///var/run/docker-bootstrap.sock")
         bootstrap.running()
         > True
         '''
-        # TODO: Add TCP:// support for running check
-        return os.path.isfile(self.socket)
+        cmd = "info"
+        return self._run(cmd) == 0
 
     def wait(self, container_id):
         ''' Block until a container has successfully stopped, and returns the
@@ -143,12 +149,11 @@ class Docker:
         try:
             return subprocess.check_call(split(cmd))
         except subprocess.CalledProcessError as expect:
-            print("Error: ", expect.returncode, expect.output)
-            return 1
+            print("Error: {0} returned: {1}".format(cmd, expect.returncode))
+            return expect.returncode
 
     def _run_with_output(self, cmd):
         ''' Abstracted run commands that return text output '''
-
         if self.socket:
             cmd = "docker -H {} {}".format(self.socket, cmd)
         else:
@@ -157,4 +162,4 @@ class Docker:
         try:
             return subprocess.check_output(split(cmd)).decode('ascii')
         except subprocess.CalledProcessError as expect:
-            return "Error: {}, {}".format(expect.returncode, expect.output)
+            return "Error: {0} returned: {1}".format(cmd, expect.returncode)
