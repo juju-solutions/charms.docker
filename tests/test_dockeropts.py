@@ -31,6 +31,14 @@ class TestDockerOpts:
         assert 'baz' not in d.data['foo']
         assert 'bar' in d.data['foo']
 
+    def test_pop_key(self):
+        d = DockerOpts()
+        d.add('temporary', 'test-flag-pop')
+        # assert the data made it before we attempt popping it off the dict
+        assert 'test-flag-pop' in d.data['temporary']
+        d.pop('temporary')
+        assert 'temporary' not in d.data
+
     def test_data_persistence(self):
         x = DockerOpts()
         x.add('juju', 'is amazing')

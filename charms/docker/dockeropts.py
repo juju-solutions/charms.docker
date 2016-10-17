@@ -62,6 +62,21 @@ class DockerOpts:
             self.data[key] = None
         self.__save()
 
+    def pop(self, key):
+        '''
+        Completely remove a flag from the DockerOpts manager including any
+        associated values. Assuming the data is currently:
+        {'foo': ['bar', 'baz']}
+
+        d.pop('foo')
+        > {}
+
+        :params key:
+        '''
+
+        self.data.pop(key)
+        self.__save()
+    
     def remove(self, key, value):
         '''
         Remove a flag value from the DockerOpts manager
