@@ -1,5 +1,5 @@
 from charms.docker.dockeropts import DockerOpts
-
+import pytest
 
 class TestDockerOpts:
 
@@ -31,13 +31,27 @@ class TestDockerOpts:
         assert 'baz' not in d.data['foo']
         assert 'bar' in d.data['foo']
 
-    def test_pop_key(self):
+    def test_pop_key_exists(self):
         d = DockerOpts()
         d.add('temporary', 'test-flag-pop')
         # assert the data made it before we attempt popping it off the dict
         assert 'test-flag-pop' in d.data['temporary']
         d.pop('temporary')
         assert 'temporary' not in d.data
+
+    def test_pop_non_existant_key(self):
+        d = DockerOpts()
+        with pytest.raises(KeyError):
+            d.pop('nonexistant')
+
+    def test_exists(self):
+        d = DockerOpts()
+        assert d.exists('foo') is True
+        assert d.exists('bazinga') is False
+        # stricts are handled transparently to the user, ensure strict mode
+        # passes existance checking
+        d.add('transparent', None, strict=True)
+        assert d.exists('transparent') is True
 
     def test_data_persistence(self):
         x = DockerOpts()
