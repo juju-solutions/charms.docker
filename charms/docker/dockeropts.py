@@ -62,6 +62,24 @@ class DockerOpts:
             self.data[key] = None
         self.__save()
 
+    def exists(self, key):
+        '''
+        Predicate method to determine if the backing dictionary has a flag for
+        the requested key.
+
+
+        eg:
+        opts.exists('foo')
+        > True
+        '''
+        found = False
+        if key in self.data:
+            found = True
+        if '{}-strict'.format(key) in self.data.keys():
+            found = True
+
+        return found
+
     def pop(self, key):
         '''
         Completely remove a flag from the DockerOpts manager including any
@@ -76,7 +94,7 @@ class DockerOpts:
 
         self.data.pop(key)
         self.__save()
-    
+
     def remove(self, key, value):
         '''
         Remove a flag value from the DockerOpts manager
