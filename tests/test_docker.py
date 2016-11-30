@@ -114,3 +114,8 @@ class TestDocker:
         with patch('charms.docker.Docker._run') as rp:
             docker.rm('12345', True, True)
             rp.assert_called_with('rm -f -v 12345')
+
+    def test_load(self, docker):
+        with patch('charms.docker.Docker._run') as rp:
+            docker.load('/path/to/image')
+            rp.assert_called_with('load -i /path/to/image')
