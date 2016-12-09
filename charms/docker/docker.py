@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 
@@ -141,6 +142,36 @@ class Docker:
 
     def load(self, path):
         self._run("load -i {}".format(path))
+
+    def healthcheck(self, container_id, verbose=False):
+        '''
+        Check the health status of a container. Read more about the HEALTHCHECK
+        Docker instruction:
+        https://docs.docker.com/engine/reference/builder/#/healthcheck
+
+        :param container_id: The container identifier to healthcheck.
+        :param verbose: Get more detailed healthcheck information.
+
+        :return: Returns True if the current healthcheck status is healthy,
+                 else False. If verbose is specified a dictionary is returned
+                 with details about the healthcheck command, None if no
+                 healthcheck exist.
+        '''
+        if verbose:
+            frmt = "{{json .State.Health}}"
+        else:
+            frmt = "{{.State.Health.Status}}"
+        cmd = "inspect --format='{0}' {1}".format(frmt, container_id)
+
+        output = self._run_with_output(cmd)
+
+        if verbose:
+            try:
+                return json.loads(output)
+            except (TypeError, ValueError):
+                return None
+        else:
+            return output == "healthy"
 
     def _run(self, cmd):
         ''' Abstracted run commands that returns only the response code'''
