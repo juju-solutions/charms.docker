@@ -139,6 +139,9 @@ class Docker:
         cmd = "wait {}".format(container_id)
         return self._run(cmd)
 
+    def load(self, path):
+        self._run("load -i {}".format(path))
+
     def _run(self, cmd):
         ''' Abstracted run commands that returns only the response code'''
         if self.socket:
