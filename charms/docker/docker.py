@@ -194,6 +194,7 @@ class Docker:
             cmd = "docker {}".format(cmd)
 
         try:
-            return subprocess.check_output(split(cmd)).decode('ascii')
+            output = subprocess.check_output(split(cmd)).decode('ascii')
+            return output.rstrip('\n')
         except subprocess.CalledProcessError as expect:
             return "Error: {0} returned: {1}".format(cmd, expect.returncode)

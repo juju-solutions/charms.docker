@@ -22,7 +22,7 @@ def run(cmd, workspace, socket=None):
             out = check_output(split(cmd))
         else:
             out = check_output(split(cmd))
-        return out
+        return out.rstrip('\n')
 
 
 # This is helpful for setting working directory context
