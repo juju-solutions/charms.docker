@@ -120,24 +120,42 @@ class TestDocker:
             docker.load('/path/to/image')
             rp.assert_called_with('load -i /path/to/image')
 
-    def test_healthcheck(self, docker):
+    def test_inspect(self, docker):
         with patch('subprocess.check_output') as spmock:
-            assert not docker.healthcheck('12345')
-            assert docker.healthcheck('12345', verbose=True) is None
+            docker.inspect('12345')
+            spmock.assert_called_with(['docker', '-H',
+                                       'unix:///var/run/docker.sock',
+                                       'inspect', '12345'])
 
-            spmock.return_value = b'healthy'
-            assert docker.healthcheck('12345')
+            docker.inspect('12345', inspect_format='{{.State.Health.Status}}')
             spmock.assert_called_with(['docker', '-H',
                                        'unix:///var/run/docker.sock',
                                        'inspect',
                                        '--format={{.State.Health.Status}}',
                                        '12345'])
 
+
+    def test_healthcheck(self, docker):
+        with patch('charms.docker.Docker.inspect') as inspect_mock:
+            assert not docker.healthcheck('12345')
+
+            inspect_mock.side_effect = ['false']
+            assert not docker.healthcheck('12345')
+
+            inspect_mock.side_effect = ['true', None]
+            assert not docker.healthcheck('12345')
+
+            inspect_mock.side_effect = ['true', None]
+            assert docker.healthcheck('12345', verbose=True) is None
+
+            inspect_mock.side_effect = ['true', 'healthy']
+            assert docker.healthcheck('12345')
+
             fake_output = ('{"Status":"healthy","FailingStreak":0,"Log":'
                            '[{"Start":"2016-12-12T14:31:52.741411777Z",'
                            '"End":"2016-12-12T14:31:52.774805273Z",'
-                           '"ExitCode":0,"Output":""}]}').encode('utf8')
-            spmock.return_value = fake_output
+                           '"ExitCode":0,"Output":""}]}')
+            inspect_mock.side_effect = ['true', fake_output]
             assert docker.healthcheck('12345', verbose=True) == {
                 "Status": "healthy",
                 "FailingStreak": 0,
@@ -148,8 +166,3 @@ class TestDocker:
                   "Output": ""
                 }]
             }
-            spmock.assert_called_with(['docker', '-H',
-                                       'unix:///var/run/docker.sock',
-                                       'inspect',
-                                       '--format={{json .State.Health}}',
-                                       '12345'])
