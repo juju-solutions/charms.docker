@@ -9,7 +9,6 @@ after_success:
   - coveralls
 script:
 - tox
-- make docs
 deploy:
   provider: pypi
   user: lazypower
