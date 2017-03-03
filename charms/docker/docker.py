@@ -143,6 +143,13 @@ class Docker:
     def load(self, path):
         self._run("load -i {}".format(path))
 
+    def inspect(self, container_id, inspect_format=None):
+        cmd = "inspect"
+        if inspect_format:
+            cmd += " --format='{}'".format(inspect_format)
+        cmd += " {}".format(container_id)
+        return self._run_with_output(cmd)
+
     def healthcheck(self, container_id, verbose=False):
         '''
         Check the health status of a container. Read more about the HEALTHCHECK
@@ -157,13 +164,20 @@ class Docker:
                  with details about the healthcheck command, None if no
                  healthcheck exist.
         '''
+
+        # If a container exits it retains it's health status. We need to make
+        # sure the container is still running to do a proper healthcheck.
+        running = "true" == self.inspect(container_id,
+                                         inspect_format="{{.State.Running}}")
+        if not running:
+            return False
+
         if verbose:
             frmt = "{{json .State.Health}}"
         else:
             frmt = "{{.State.Health.Status}}"
-        cmd = "inspect --format='{0}' {1}".format(frmt, container_id)
 
-        output = self._run_with_output(cmd)
+        output = self.inspect(container_id, inspect_format=frmt)
 
         if verbose:
             try:
