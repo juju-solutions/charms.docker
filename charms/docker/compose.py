@@ -138,3 +138,15 @@ class Compose:
         else:
             cmd = "docker-compose up -d"
         run(cmd, self.workspace, self.socket)
+
+    def down(self, service=None):
+        '''
+        Convenience method that wraps `docker-compose down`
+
+        :param service: if defined only stops the specified service
+        '''
+        if service:
+            cmd = "docker-compose down {}".format(service)
+        else:
+            cmd = "docker-compose down"
+        run(cmd, self.workspace, self.socket)
