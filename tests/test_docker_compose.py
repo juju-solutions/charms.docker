@@ -90,6 +90,13 @@ class TestCompose:
             expect = 'docker-compose up -d'
             s.assert_called_with(expect, compose.workspace, None)
 
+    def test_down_default_formation(self, compose):
+        with patch('charms.docker.compose.run') as s:
+            compose.up()
+            compose.down()
+            expect = 'docker-compose down'
+            s.assert_called_with(expect, compose.workspace, None)
+
     def test_start_service(self, compose):
         with patch('charms.docker.compose.run') as s:
             compose.start('nginx')
