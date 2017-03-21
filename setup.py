@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name = "charms.docker",
-    version = '0.1.15',
+    version = '0.1.16',
     author = "Charles Butler",
     author_email = "charles.butler@ubuntu.com",
     url = "http://github.com/juju-solutions/charms.docker",
