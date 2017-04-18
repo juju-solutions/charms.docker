@@ -126,6 +126,9 @@ class TestCompose:
             compose.stop('nginx')
             expect = 'docker-compose stop -t 10 nginx'
             s.assert_called_with(expect, compose.workspace, None)
+            compose.stop()
+            expect = 'docker-compose stop -t 10'
+            s.assert_called_with(expect, compose.workspace, None)
 
     @patch('charms.docker.runner.chdir')
     @patch('charms.docker.runner.check_output')
