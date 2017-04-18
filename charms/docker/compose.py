@@ -117,14 +117,17 @@ class Compose:
         cmd = "docker-compose start {}".format(service)
         run(cmd, self.workspace, self.socket)
 
-    def stop(self, service, timeout=10):
+    def stop(self, service=None, timeout=10):
         '''
         Stop running containers without removing them.
 
         :param service: Service to stop.
         :param timeout: specify a shutdown timeout in seconds.
         '''
-        cmd = "docker-compose stop -t {} {}".format(timeout, service)
+        if not service:
+            cmd = "docker-compose stop -t {}".format(timeout)
+        else:
+            cmd = "docker-compose stop -t {} {}".format(timeout, service)
         run(cmd, self.workspace, self.socket)
 
     def up(self, service=None):
