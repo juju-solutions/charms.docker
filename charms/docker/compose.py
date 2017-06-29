@@ -142,9 +142,14 @@ class Compose:
             cmd = "docker-compose up -d"
         run(cmd, self.workspace, self.socket)
 
-    def down(self):
+    def down(self, rmi=False):
         '''
         Convenience method that wraps `docker-compose down`
+
+        :param rmi: if True, all images used by any service will be removed
         '''
-        cmd = "docker-compose down"
+        if rmi:
+            cmd = "docker-compose down --rmi=all"
+        else:
+            cmd = "docker-compose down"
         run(cmd, self.workspace, self.socket)
